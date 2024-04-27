@@ -5,7 +5,6 @@ using FluentAssertions;
 
 namespace AccountManagement.Api.Test.Controllers
 {
-    [TestFixture]
     public class SavingsAccountControllerTest
     {
         private const string BaseUri = "api/v1/savingsaccount";
