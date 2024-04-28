@@ -20,9 +20,9 @@ namespace CustomerService.Api.Test.Controllers
             var app = await GetWebAppFactory(Guid.NewGuid().ToString());
             using var httpClient = app.CreateClient();
             
-            var requestUri = GetCreateCustomerEndpointUri("John Doe", 3);
+            var requestUrl = GetCreateCustomerEndpointUrl("John Doe", 3);
 
-            var response = await httpClient.PostAsync(requestUri, null);
+            var response = await httpClient.PostAsync(requestUrl, null);
 
             response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
@@ -34,10 +34,10 @@ namespace CustomerService.Api.Test.Controllers
             using var httpClient = app.CreateClient();
 
             var customer = "John Doe";
-            var requestUri = GetCreateCustomerEndpointUri(customer, 3);
-            await httpClient.PostAsync(requestUri, null);
+            var requestUrl = GetCreateCustomerEndpointUrl(customer, 3);
+            await httpClient.PostAsync(requestUrl, null);
 
-            var response = await httpClient.PostAsync(requestUri, null);
+            var response = await httpClient.PostAsync(requestUrl, null);
 
             response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
@@ -56,9 +56,9 @@ namespace CustomerService.Api.Test.Controllers
 
             await CreateCustomer(httpClient, customer.Name, customer.SavingsAccountId);
 
-            var requestUri = GetCustomerEndpointUri(customer.Name);
+            var requestUrl = GetCustomerEndpointUrl(customer.Name);
 
-            var response = await httpClient.GetAsync(requestUri);
+            var response = await httpClient.GetAsync(requestUrl);
 
             response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
@@ -75,19 +75,19 @@ namespace CustomerService.Api.Test.Controllers
                 SavingsAccountId = 3
             };
 
-            var requestUri = GetCustomerEndpointUri(customer.Name);
+            var requestUrl = GetCustomerEndpointUrl(customer.Name);
 
-            var response = await httpClient.GetAsync(requestUri);
+            var response = await httpClient.GetAsync(requestUrl);
 
             response.StatusCode.Should().Be(HttpStatusCode.NotFound);
         }
 
-        private static string GetCreateCustomerEndpointUri(string fullName, int savingsAccountId)
+        private static string GetCreateCustomerEndpointUrl(string fullName, int savingsAccountId)
         {
             return $"{BaseUri}/customer/{fullName}/{savingsAccountId}";
         }
 
-        private static string GetCustomerEndpointUri(string fullName)
+        private static string GetCustomerEndpointUrl(string fullName)
         {
             return $"{BaseUri}/customer/{fullName}";
         }
@@ -95,8 +95,8 @@ namespace CustomerService.Api.Test.Controllers
         // TODO change this to instantiating another in-memory db with data
         private async Task CreateCustomer(HttpClient httpClient, string fullName, int savingsAccountId)
         {
-            var requestUri = GetCreateCustomerEndpointUri(fullName, savingsAccountId);
-            await httpClient.PostAsync(requestUri, null);
+            var requestUrl = GetCreateCustomerEndpointUrl(fullName, savingsAccountId);
+            await httpClient.PostAsync(requestUrl, null);
         }
 
         private static async Task<WebApplicationFactory<Program>> GetWebAppFactory(string uniqueTestDbName)
