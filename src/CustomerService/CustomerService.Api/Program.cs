@@ -2,6 +2,8 @@ using CustomerService.Api.Data;
 using CustomerService.Api.Repositories;
 using CustomerService.Api.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Extensions;
+using Swashbuckle.AspNetCore.Swagger;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,6 +34,8 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+app.Services.SaveSwaggerJson();
+
 app.Run();
 
 static IConfiguration CreateConfiguration() =>
@@ -39,3 +43,14 @@ static IConfiguration CreateConfiguration() =>
         .SetBasePath(Directory.GetCurrentDirectory())
         .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
         .Build();
+
+public static class SwaggerExtensions
+{
+    public static void SaveSwaggerJson(this IServiceProvider provider)
+    {
+        var sw = provider.GetRequiredService<ISwaggerProvider>();
+        var doc = sw.GetSwagger("v1", null, "/");
+        var swaggerFile = doc.SerializeAsJson(Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_0);
+        File.WriteAllText("openapi.json", swaggerFile);
+    }
+}
