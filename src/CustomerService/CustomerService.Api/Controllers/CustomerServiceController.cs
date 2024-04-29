@@ -20,10 +20,10 @@ namespace CustomerService.Api.Controllers
             _customerService = customerService;
         }
 
-        [HttpPost("customer/{fullName}/{savingsAccountId}")]
-        public async Task<IActionResult> CreateCustomer(string fullName, int savingsAccountId)
+        [HttpPost("customer/{fullName}")]
+        public async Task<IActionResult> CreateCustomer(string fullName)
         {
-            var customerCreated = await _customerService.CreateCustomer(fullName, savingsAccountId);
+            var customerCreated = await _customerService.CreateCustomer(fullName);
 
             if (!customerCreated)
             {
@@ -44,6 +44,14 @@ namespace CustomerService.Api.Controllers
             }
 
             return Ok(customer);
+        }
+
+        [HttpPut("customer")]
+        public async Task<IActionResult> UpdateCustomer(Customer customer)
+        {
+            await _customerService.UpdateCustomer(customer);
+
+            return Ok();
         }
     }
 }

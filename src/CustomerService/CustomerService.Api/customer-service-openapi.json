@@ -10,7 +10,7 @@
     }
   ],
   "paths": {
-    "/api/v1/CustomerService/customer/{fullName}/{savingsAccountId}": {
+    "/api/v1/CustomerService/customer/{fullName}": {
       "post": {
         "tags": [
           "CustomerService"
@@ -23,15 +23,6 @@
             "schema": {
               "type": "string"
             }
-          },
-          {
-            "name": "savingsAccountId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
           }
         ],
         "responses": {
@@ -39,9 +30,7 @@
             "description": "Success"
           }
         }
-      }
-    },
-    "/api/v1/CustomerService/customer/{fullName}": {
+      },
       "get": {
         "tags": [
           "CustomerService"
@@ -79,6 +68,37 @@
           }
         }
       }
+    },
+    "/api/v1/CustomerService/customer": {
+      "put": {
+        "tags": [
+          "CustomerService"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Customer"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Customer"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Customer"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -96,7 +116,8 @@
           },
           "savingsAccountId": {
             "type": "integer",
-            "format": "int32"
+            "format": "int32",
+            "nullable": true
           }
         },
         "additionalProperties": false

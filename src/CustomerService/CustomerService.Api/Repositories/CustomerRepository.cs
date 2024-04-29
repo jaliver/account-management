@@ -25,5 +25,12 @@ namespace CustomerService.Api.Repositories
         {
             return await _dbContext.Set<Customer>().FirstOrDefaultAsync(x => x.Name != null && x.Name.Equals(fullName));
         }
+
+        public async Task<Customer> UpdateCustomer(Customer customer)
+        {
+            var updatedCustomer = _dbContext.Set<Customer>().Update(customer);
+            await _dbContext.SaveChangesAsync();
+            return updatedCustomer.Entity;
+        }
     }
 }

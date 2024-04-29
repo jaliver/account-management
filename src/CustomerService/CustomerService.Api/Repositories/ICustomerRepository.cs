@@ -6,5 +6,6 @@ namespace CustomerService.Api.Repositories
     {
         Task AddCustomer(Customer customer);
         Task<Customer?> GetCustomer(string fullName);
+        Task<Customer> UpdateCustomer(Customer customer);
     }
 }

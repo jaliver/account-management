@@ -51,6 +51,6 @@ public static class SwaggerExtensions
         var sw = provider.GetRequiredService<ISwaggerProvider>();
         var doc = sw.GetSwagger("v1", null, "/");
         var swaggerFile = doc.SerializeAsJson(Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_0);
-        File.WriteAllText("openapi.json", swaggerFile);
+        File.WriteAllText("customer-service-openapi.json", swaggerFile);
     }
 }

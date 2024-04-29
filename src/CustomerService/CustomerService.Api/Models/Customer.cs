@@ -4,6 +4,6 @@
     {
         public int Id { get; set; }
         public string? Name { get; set; }
-        public int SavingsAccountId { get; set; }
+        public int? SavingsAccountId { get; set; }
     }
 }

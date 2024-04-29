@@ -20,4 +20,8 @@
 		<InternalsVisibleTo Include="CustomerService.Api.Test" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Migrations\" />
+	</ItemGroup>
+
 </Project>

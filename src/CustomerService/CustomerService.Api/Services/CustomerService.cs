@@ -14,7 +14,7 @@ namespace CustomerService.Api.Services
             _customerRepository = customerRepository;
         }
 
-        public async Task<bool> CreateCustomer(string fullName, int savingsAccountId)
+        public async Task<bool> CreateCustomer(string fullName)
         {
             var existingCustomer = await GetCustomer(fullName);
 
@@ -25,8 +25,7 @@ namespace CustomerService.Api.Services
 
             var newCustomer = new Customer
             {
-                Name = fullName,
-                SavingsAccountId = savingsAccountId,
+                Name = fullName
             };
 
             await _customerRepository.AddCustomer(newCustomer);
@@ -37,6 +36,12 @@ namespace CustomerService.Api.Services
         public async Task<Customer?> GetCustomer(string fullName)
         {
             return await _customerRepository.GetCustomer(fullName);
+        }
+
+        public async Task<bool> UpdateCustomer(Customer customer)
+        {
+            await _customerRepository.UpdateCustomer(customer);
+            return true;
         }
     }
 }
