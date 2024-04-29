@@ -75,12 +75,11 @@ namespace AccountService.Api.Test.Controllers
             var app = await GetWebAppFactory(Guid.NewGuid().ToString());
             using var httpClient = app.CreateClient();
 
-            var savingsAccountId = 1; // TODO get this from in-memory DB
             var customerId = 5;
             var amountToDeposit = 1;
             await CreateSavingsAccount(httpClient, customerId);
 
-            var requestUrl = GetDepositToSavingsAccountEndpointUrl(savingsAccountId, amountToDeposit);
+            var requestUrl = GetDepositToSavingsAccountEndpointUrl(customerId, amountToDeposit);
 
             var response = await httpClient.PutAsync(requestUrl, null);
 
@@ -92,13 +91,12 @@ namespace AccountService.Api.Test.Controllers
         {
             var app = await GetWebAppFactory(Guid.NewGuid().ToString());
             using var httpClient = app.CreateClient();
-
-            var savingsAccountId = 1; // TODO get this from in-memory DB
+            
             var customerId = 5;
             var amountToDeposit = -1;
             await CreateSavingsAccount(httpClient, customerId);
 
-            var requestUrl = GetDepositToSavingsAccountEndpointUrl(savingsAccountId, amountToDeposit);
+            var requestUrl = GetDepositToSavingsAccountEndpointUrl(customerId, amountToDeposit);
 
             var response = await httpClient.PutAsync(requestUrl, null);
 
@@ -141,12 +139,11 @@ namespace AccountService.Api.Test.Controllers
             var app = await GetWebAppFactory(Guid.NewGuid().ToString());
             using var httpClient = app.CreateClient();
 
-            var savingsAccountId = 1; // TODO get this from in-memory DB
             var customerId = 5;
             var amountToWithdraw = 1;
             await CreateSavingsAccount(httpClient, customerId);
 
-            var requestUrl = GetWithdrawFromSavingsAccountEndpointUrl(savingsAccountId, amountToWithdraw);
+            var requestUrl = GetWithdrawFromSavingsAccountEndpointUrl(customerId, amountToWithdraw);
 
             var response = await httpClient.PutAsync(requestUrl, null);
 
@@ -159,12 +156,11 @@ namespace AccountService.Api.Test.Controllers
             var app = await GetWebAppFactory(Guid.NewGuid().ToString());
             using var httpClient = app.CreateClient();
 
-            var savingsAccountId = 1; // TODO get this from in-memory DB
             var customerId = 5;
             var amountToWithdraw = -1;
             await CreateSavingsAccount(httpClient, customerId);
 
-            var requestUrl = GetWithdrawFromSavingsAccountEndpointUrl(savingsAccountId, amountToWithdraw);
+            var requestUrl = GetWithdrawFromSavingsAccountEndpointUrl(customerId, amountToWithdraw);
 
             var response = await httpClient.PutAsync(requestUrl, null);
 
@@ -211,18 +207,18 @@ namespace AccountService.Api.Test.Controllers
             return $"{BaseUri}/savings-account/{customerId}";
         }
 
-        private static string GetDepositToSavingsAccountEndpointUrl(int savingsAccountId, decimal amount)
+        private static string GetDepositToSavingsAccountEndpointUrl(int customerId, decimal amount)
         {
-            return $"{BaseUri}/deposit-to-savings-account/{savingsAccountId}/{amount}";
+            return $"{BaseUri}/deposit-to-savings-account/{customerId}/{amount}";
         }
 
-        private static string GetWithdrawFromSavingsAccountEndpointUrl(int savingsAccountId, decimal amount)
+        private static string GetWithdrawFromSavingsAccountEndpointUrl(int customerId, decimal amount)
         {
-            return $"{BaseUri}/withdraw-from-savings-account/{savingsAccountId}/{amount}";
+            return $"{BaseUri}/withdraw-from-savings-account/{customerId}/{amount}";
         }
 
         // TODO change this to instantiating another in-memory db with data
-        private async Task CreateSavingsAccount(HttpClient httpClient, int customerId)
+        private static async Task CreateSavingsAccount(HttpClient httpClient, int customerId)
         {
             var requestUrl = GetCreateSavingsAccountEndpointUrl(customerId);
             await httpClient.PostAsync(requestUrl, null);

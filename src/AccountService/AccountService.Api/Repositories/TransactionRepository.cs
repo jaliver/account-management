@@ -1,4 +1,5 @@
 ﻿using AccountService.Api.Data;
+using AccountService.Api.Models;
 
 namespace AccountService.Api.Repositories
 {
@@ -11,6 +12,17 @@ namespace AccountService.Api.Repositories
             ArgumentNullException.ThrowIfNull(dbContext, nameof(dbContext));
 
             _dbContext = dbContext;
+        }
+
+        public async Task AddTransaction(Transaction transaction)
+        {
+            await _dbContext.Set<Transaction>().AddAsync(transaction);
+            var result = await _dbContext.SaveChangesAsync();
+        }
+
+        public IEnumerable<Transaction> GetTransactions(int savingsAccountId)
+        {
+            return _dbContext.Set<Transaction>().Where(x => x.SavingsAccountId.Equals(savingsAccountId));
         }
     }
 }

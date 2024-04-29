@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AccountService.Api.Migrations
 {
     [DbContext(typeof(AccountDbContext))]
-    [Migration("20240428212426_InitialCreate")]
+    [Migration("20240429192901_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -29,7 +29,7 @@ namespace AccountService.Api.Migrations
                     b.Property<decimal>("Balance")
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("CustomerId")
+                    b.Property<int>("CustomerId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
@@ -64,11 +64,13 @@ namespace AccountService.Api.Migrations
 
             modelBuilder.Entity("AccountService.Api.Models.Transaction", b =>
                 {
-                    b.HasOne("AccountService.Api.Models.SavingsAccount", null)
+                    b.HasOne("AccountService.Api.Models.SavingsAccount", "SavingsAccount")
                         .WithMany("Transactions")
                         .HasForeignKey("SavingsAccountId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("SavingsAccount");
                 });
 
             modelBuilder.Entity("AccountService.Api.Models.SavingsAccount", b =>

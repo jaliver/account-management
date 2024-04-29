@@ -7,5 +7,6 @@
         public decimal Amount { get; set; }
         public DateTime CreatedDate { get; set; }
         public int SavingsAccountId { get; set; }
+        public SavingsAccount SavingsAccount { get; set; } = default!;
     }
 }
