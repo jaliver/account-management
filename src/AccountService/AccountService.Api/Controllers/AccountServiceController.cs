@@ -72,9 +72,9 @@ namespace AccountService.Api.Controllers
                 return BadRequest();
             }
 
-            var depositSucceeded = await _savingsAccountService.WithdrawFromSavingsAccount(customerId, amount);
+            var withdrawalSucceeded = await _savingsAccountService.WithdrawFromSavingsAccount(customerId, amount);
 
-            if (!depositSucceeded)
+            if (!withdrawalSucceeded)
             {
                 return BadRequest();
             }

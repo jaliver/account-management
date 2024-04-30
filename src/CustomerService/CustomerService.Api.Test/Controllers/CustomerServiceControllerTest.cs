@@ -6,6 +6,8 @@ using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using System.Net.Http.Json;
+using CustomerService.Api.Models;
 
 namespace CustomerService.Api.Test.Controllers
 {
@@ -27,7 +29,7 @@ namespace CustomerService.Api.Test.Controllers
         }
 
         [Test]
-        public async Task Given_ExistingCustomer_When_CallingCreateCustomer_Then_ReturnsOk()
+        public async Task Given_ExistingCustomer_When_CallingCreateCustomer_Then_ReturnsBadRequest()
         {
             var app = await GetWebAppFactory(Guid.NewGuid().ToString());
             using var httpClient = app.CreateClient();
@@ -41,7 +43,7 @@ namespace CustomerService.Api.Test.Controllers
         }
 
         [Test]
-        public async Task Given_ExistingCustomer_When_CallingGetCustomer_Then_ReturnsOk()
+        public async Task Given_ExistingCustomer_When_CallingGetCustomer_Then_ReturnsCustomer()
         {
             var app = await GetWebAppFactory(Guid.NewGuid().ToString());
             using var httpClient = app.CreateClient();
@@ -52,8 +54,11 @@ namespace CustomerService.Api.Test.Controllers
             var requestUrl = GetCustomerEndpointUrl(fullName);
 
             var response = await httpClient.GetAsync(requestUrl);
+            var result = await response.Content.ReadFromJsonAsync<Customer>();
 
             response.StatusCode.Should().Be(HttpStatusCode.OK);
+            result.Should().NotBeNull();
+            result?.Name.Should().Be(fullName);
         }
 
         [Test]

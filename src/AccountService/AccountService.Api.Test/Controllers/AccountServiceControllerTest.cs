@@ -1,5 +1,7 @@
 ﻿using System.Net;
+using System.Net.Http.Json;
 using AccountService.Api.Data;
+using AccountService.Api.Models;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
@@ -42,7 +44,7 @@ namespace AccountService.Api.Test.Controllers
         }
 
         [Test]
-        public async Task Given_ExistingSavingsAccount_When_CallingGetSavingsAccount_Then_ReturnsOk()
+        public async Task Given_ExistingSavingsAccount_When_CallingGetSavingsAccount_Then_ReturnsSavingsAccount()
         {
             var app = await GetWebAppFactory(Guid.NewGuid().ToString());
             using var httpClient = app.CreateClient();
@@ -52,8 +54,11 @@ namespace AccountService.Api.Test.Controllers
             var requestUrl = GetSavingsAccountEndpointUrl(customerId);
 
             var response = await httpClient.GetAsync(requestUrl);
+            var result = await response.Content.ReadFromJsonAsync<SavingsAccount>();
 
             response.StatusCode.Should().Be(HttpStatusCode.OK);
+            result.Should().NotBeNull();
+            result?.CustomerId.Should().Be(customerId);
         }
 
         [Test]
@@ -134,7 +139,7 @@ namespace AccountService.Api.Test.Controllers
         }
 
         [Test]
-        public async Task Given_ExistingSavingsAccountAndPositiveAmountToWithdraw_When_CallingWithdrawFromSavingsAccount_Then_ReturnsOk()
+        public async Task Given_ExistingSavingsAccountAndPositiveAmountToWithdrawButWithBalanceLessThanWithdrawalAmount_When_CallingWithdrawFromSavingsAccount_Then_ReturnsBadRequest()
         {
             var app = await GetWebAppFactory(Guid.NewGuid().ToString());
             using var httpClient = app.CreateClient();
@@ -142,6 +147,25 @@ namespace AccountService.Api.Test.Controllers
             var customerId = 5;
             var amountToWithdraw = 1;
             await CreateSavingsAccount(httpClient, customerId);
+
+            var requestUrl = GetWithdrawFromSavingsAccountEndpointUrl(customerId, amountToWithdraw);
+
+            var response = await httpClient.PutAsync(requestUrl, null);
+
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        }
+
+        [Test]
+        public async Task Given_ExistingSavingsAccountAndPositiveAmountToWithdrawAndWithBalanceLargerThanWithdrawalAmount_When_CallingWithdrawFromSavingsAccount_Then_ReturnsOk()
+        {
+            var app = await GetWebAppFactory(Guid.NewGuid().ToString());
+            using var httpClient = app.CreateClient();
+
+            var customerId = 5;
+            var balance = 2;
+            var amountToWithdraw = 1;
+            await CreateSavingsAccount(httpClient, customerId);
+            await DepositToSavingsAccount(httpClient, customerId, balance);
 
             var requestUrl = GetWithdrawFromSavingsAccountEndpointUrl(customerId, amountToWithdraw);
 
@@ -222,6 +246,13 @@ namespace AccountService.Api.Test.Controllers
         {
             var requestUrl = GetCreateSavingsAccountEndpointUrl(customerId);
             await httpClient.PostAsync(requestUrl, null);
+        }
+
+        // TODO change this to instantiating another in-memory db with data
+        private static async Task DepositToSavingsAccount(HttpClient httpClient, int customerId, decimal amount)
+        {
+            var requestUrl = GetDepositToSavingsAccountEndpointUrl(customerId, amount);
+            await httpClient.PutAsync(requestUrl, null);
         }
 
         private static async Task<WebApplicationFactory<Program>> GetWebAppFactory(string uniqueTestDbName)
