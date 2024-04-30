@@ -8,11 +8,30 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Resources\account-service-openapi.json" />
+    <Content Remove="Resources\customer-service-openapi.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.ApiDescription.Client" Version="7.0.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="NSwag.ApiDescription.Client" Version="13.18.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
   </ItemGroup>
 
 	<ItemGroup>
 		<InternalsVisibleTo Include="AccountManagement.Api.Test" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <OpenApiReference Include="Resources\account-service-openapi.json" CodeGenerator="NSwagCSharp" Namespace="AccountManagement.Api.AccountService" ClassName="AccountServiceClient" />
+	  <OpenApiReference Include="Resources\customer-service-openapi.json" CodeGenerator="NSwagCSharp" Namespace="AccountManagement.Api.CustomerService" ClassName="CustomerServiceClient" />
 	</ItemGroup>
 
 </Project>

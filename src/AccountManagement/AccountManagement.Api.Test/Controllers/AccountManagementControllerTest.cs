@@ -5,9 +5,9 @@ using FluentAssertions;
 
 namespace AccountManagement.Api.Test.Controllers
 {
-    public class SavingsAccountControllerTest
+    public class AccountManagementControllerTest
     {
-        private const string BaseUri = "api/v1/savingsaccount";
+        private const string BaseUri = "api/v1/accountmanagement";
 
         [Test]
         public async Task When_CallingCreateSavingsAccount_Then_ReturnsOk()
@@ -15,7 +15,7 @@ namespace AccountManagement.Api.Test.Controllers
             await using var app = new WebApplicationFactory<Program>();
             using var httpClient = app.CreateClient();
             
-            var requestUri = GetCreateSavingsAccountEndpointUri("First", "Last");
+            var requestUri = GetCreateSavingsAccountEndpointUri("John Doe");
 
             var response = await httpClient.PostAsync(requestUri, null);
 
@@ -28,7 +28,7 @@ namespace AccountManagement.Api.Test.Controllers
             await using var app = new WebApplicationFactory<Program>();
             using var httpClient = app.CreateClient();
 
-            var requestUri = GetDepositEndpointUri(3, 100);
+            var requestUri = GetDepositEndpointUri("John Doe", 100);
 
             var response = await httpClient.PutAsync(requestUri, null);
 
@@ -41,7 +41,7 @@ namespace AccountManagement.Api.Test.Controllers
             await using var app = new WebApplicationFactory<Program>();
             using var httpClient = app.CreateClient();
 
-            var requestUri = GetWithdrawEndpointUri(3, 100);
+            var requestUri = GetWithdrawEndpointUri("John Doe", 100);
 
             var response = await httpClient.PutAsync(requestUri, null);
 
@@ -54,7 +54,7 @@ namespace AccountManagement.Api.Test.Controllers
             await using var app = new WebApplicationFactory<Program>();
             using var httpClient = app.CreateClient();
 
-            var requestUri = GetSavingsAccountBalanceEndpointUri(3);
+            var requestUri = GetSavingsAccountBalanceEndpointUri("John Doe");
 
             var response = await httpClient.GetAsync(requestUri);
 
@@ -67,36 +67,36 @@ namespace AccountManagement.Api.Test.Controllers
             await using var app = new WebApplicationFactory<Program>();
             using var httpClient = app.CreateClient();
 
-            var requestUri = GetTransactionsEndpointUri(3, 10);
+            var requestUri = GetTransactionsEndpointUri("John Doe", 10);
 
             var response = await httpClient.GetAsync(requestUri);
 
             response.StatusCode.Should().Be(HttpStatusCode.OK);
         }
 
-        private static string GetCreateSavingsAccountEndpointUri(string customerFirstName, string customerSurname)
+        private static string GetCreateSavingsAccountEndpointUri(string customerFullName)
         {
-            return $"{BaseUri}/savings-account?customerFirstName={customerFirstName}&customerSurname={customerSurname}";
+            return $"{BaseUri}/savings-account/{customerFullName}";
         }
 
-        private static string GetDepositEndpointUri(int accountNumber, decimal amount)
+        private static string GetDepositEndpointUri(string customerFullName, double amount)
         {
-            return $"{BaseUri}/deposit?accountNumber={accountNumber}&amount={amount}";
+            return $"{BaseUri}/deposit/{customerFullName}/{amount}";
         }
 
-        private static string GetWithdrawEndpointUri(int accountNumber, decimal amount)
+        private static string GetWithdrawEndpointUri(string customerFullName, double amount)
         {
-            return $"{BaseUri}/withdrawal?accountNumber={accountNumber}&amount={amount}";
+            return $"{BaseUri}/withdrawal/{customerFullName}/{amount}";
         }
 
-        private static string GetSavingsAccountBalanceEndpointUri(int accountNumber)
+        private static string GetSavingsAccountBalanceEndpointUri(string customerFullName)
         {
-            return $"{BaseUri}/savings-account-balance?accountNumber={accountNumber}";
+            return $"{BaseUri}/savings-account-balance/{customerFullName}";
         }
 
-        private static string GetTransactionsEndpointUri(int accountNumber, int numberOfTransactions)
+        private static string GetTransactionsEndpointUri(string customerFullName, int numberOfTransactions)
         {
-            return $"{BaseUri}/transactions?accountNumber={accountNumber}&numberOfTransactions={numberOfTransactions}";
+            return $"{BaseUri}/transactions/{customerFullName}/{numberOfTransactions}";
         }
     }
 }

@@ -59,7 +59,9 @@ namespace AccountService.Api.Services
 
             await _transactionService.CreateDepositTransaction(savingsAccount, amount);
 
-            return await UpdateSavingsAccountWithLatestTransaction(customerId);
+            savingsAccount.Balance += amount;
+
+            return await UpdateSavingsAccountWithLatestTransaction(savingsAccount);
         }
 
         // TODO either create result type or throw different exceptions to expose errors
@@ -72,26 +74,21 @@ namespace AccountService.Api.Services
 
             var savingsAccount = await GetSavingsAccount(customerId);
 
-            if (savingsAccount is null)
+            if (savingsAccount is null || savingsAccount.Balance < amount)
             {
                 return false;
             }
 
             await _transactionService.CreateWithdrawalTransaction(savingsAccount, amount);
 
-            return await UpdateSavingsAccountWithLatestTransaction(customerId);
+            savingsAccount.Balance -= amount;
+
+            return await UpdateSavingsAccountWithLatestTransaction(savingsAccount);
         }
 
         // TODO either create result type or throw different exceptions to expose errors
-        private async Task<bool> UpdateSavingsAccountWithLatestTransaction(int customerId)
+        private async Task<bool> UpdateSavingsAccountWithLatestTransaction(SavingsAccount savingsAccount)
         {
-            var savingsAccount = await _savingsAccountRepository.GetSavingsAccount(customerId);
-
-            if (savingsAccount is null)
-            {
-                return false;
-            }
-
             var transactions = _transactionService.GetTransactions(savingsAccount.Id);
             var latestTransaction = transactions.MaxBy(x => x.CreatedDate);
 
@@ -99,7 +96,7 @@ namespace AccountService.Api.Services
             {
                 return false;
             }
-
+            
             savingsAccount.Transactions.Add(latestTransaction);
             await _savingsAccountRepository.UpdateSavingsAccount(savingsAccount);
 
